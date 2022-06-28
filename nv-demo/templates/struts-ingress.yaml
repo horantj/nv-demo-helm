@@ -1,0 +1,41 @@
+{{- if .Values.struts.ingress.enabled -}}
+{{- if (semverCompare ">=1.19-0" (substr 1 -1 .Capabilities.KubeVersion.GitVersion)) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nv-struts-ingress
+  namespace: {{ .Release.Namespace }}
+{{- with .Values.struts.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+    chart: {{ template "nv-demo.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+{{- if .Values.struts.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.struts.ingress.ingressClassName | quote }}
+{{ end }}
+{{- if .Values.struts.ingress.tls }}
+  tls:
+  - hosts:
+    - {{ .Values.struts.ingress.host }}
+{{- if .Values.struts.ingress.secretName }}
+    secretName: {{ .Values.struts.ingress.secretName }}
+{{- end }}
+{{- end }}
+  rules:
+  - host: {{ .Values.struts.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.struts.ingress.path }}
+        pathType: Prefix
+        backend:
+          service:
+            name: struts-{{ template "nv-demo.fullname" . }}
+            port:
+              number: {{ .Values.struts.service.port }}
+{{- else }}
+{{- end }}
+{{- end }}

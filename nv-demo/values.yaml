@@ -1,0 +1,11 @@
+struts:
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    host: "struts.34.206.72.88.sslip.io"
+    ingressClassName: ""
+    path: "/"
+    annotations: {}
+    tls: true

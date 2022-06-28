@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iodine-client
+spec:
+  selector: 
+    matchLabels:
+      app: iodine-client  
+  template:
+    metadata:
+      labels:
+        app: iodine-client
+      name: api-client  
+    spec:
+      containers:
+      - name: iodine-client
+        image: nvbeta/dns-client2
+        securityContext:
+          privileged: true
+        ports:
+        - containerPort: 53

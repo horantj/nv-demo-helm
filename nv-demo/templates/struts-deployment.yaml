@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: struts-{{ template "nv-demo.fullname" . }}
+  labels:
+    app: struts-{{ template "nv-demo.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: struts-{{ template "nv-demo.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: struts-{{ template "nv-demo.fullname" . }}
+    spec:
+      containers:
+      - name: struts
+        image: skywalke34/struts
+        ports:
+        - containerPort: 8080

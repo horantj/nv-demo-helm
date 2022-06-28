@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: struts-{{ template "nv-demo.fullname" . }}
+  labels:
+{{ include "nv-demo.labels" . | indent 4 }}
+spec:
+  type: {{ .Values.struts.service.type }}
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: struts-{{ template "nv-demo.fullname" . }}
