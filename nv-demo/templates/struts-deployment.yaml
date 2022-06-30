@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: struts-{{ template "nv-demo.fullname" . }}
+  name: struts
   labels:
     app: struts-{{ template "nv-demo.fullname" . }}
 spec:

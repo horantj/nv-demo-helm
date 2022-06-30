@@ -33,7 +33,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: struts-{{ template "nv-demo.fullname" . }}
+            name: struts
             port:
               number: {{ .Values.struts.service.port }}
 {{- else }}
