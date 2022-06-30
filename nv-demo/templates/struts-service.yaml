@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: struts-{{ template "nv-demo.fullname" . }}
+  name: struts
   labels:
 {{ include "nv-demo.labels" . | indent 4 }}
 spec:
