@@ -1,26 +1,55 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
-jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+orbs: 
+  neuvector-orb: neuvector/neuvector-orb@1.0.2
+executors:
+  docker-publisher:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: circleci/buildpack-deps:stretch
+jobs:
+  build:
+    executor: docker-publisher
     steps:
       - checkout
+      - setup_remote_docker
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+          name: Build Docker image
+          command: |
+            docker build -t $IMAGE_NAME:$CIRCLE_SHA1 exploit-pod/
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+  publish-latest:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$HUB_API" | docker login -u "$HUB_USER" --password-stdin
+            docker push $IMAGE_NAME:$CIRCLE_SHA1
 workflows:
-  say-hello-workflow:
+  version: 2
+  build:
     jobs:
-      - say-hello
+      - build
+      - neuvector/scan-image:
+        requires:
+        - build
+          context: myContext
+          scan_local_image: true
+          image_name: $IMAGE_NAME
+          image_tag: $CIRCLE_SHA1
+          path: /tmp/workspace/
+          image_tar_file: /tmp/neuvector/image.tar
+          scan_layers: true
+          high_vul_to_fail: 1
+          medium_vul_to_fail: 3
