@@ -56,8 +56,8 @@ workflows:
           scan_layers: false
           high_vul_to_fail: 0
           medium_vul_to_fail: 3
-          nv_registry_url: hub.docker.io
-          nv_registry_username: anonymous
-          nv_registry_password: anonymous
+          nv_registry_url: hub.docker.com
+          nv_registry_username: $HUB_USER
+          nv_registry_password: $HUB_API
           nv_scanner_image: neuvector/scanner
           nv_license: bogus
