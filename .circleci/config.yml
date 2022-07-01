@@ -67,10 +67,10 @@ workflows:
     jobs:
       - build:
         filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only: main
+           tags:
+             only: /^v.*/
+           branches:
+             only: main
       - publish-tag:
           requires:
             - build
