@@ -52,7 +52,7 @@ workflows:
           image_name: $IMAGE_NAME
           image_tag: $CIRCLE_SHA1
           path: /tmp/neuvector/
-          image_tar_file: /tmp/neuvector/image.tar
+          image_tar_file: image.tar
           scan_layers: false
           high_vul_to_fail: 0
           medium_vul_to_fail: 3
