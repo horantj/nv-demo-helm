@@ -102,6 +102,7 @@ workflows:
       - publish-tag:
           requires:
             - build
+            - neuvector-orb/scan-image
           filters:
             tags:
               only: /^v.*/
