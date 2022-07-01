@@ -41,15 +41,12 @@ jobs:
             docker push $IMAGE_NAME:$CIRCLE_SHA1
 workflows:
   version: 2
-  build:
-    jobs:
-      - build
   scan-local-image:
     jobs:
-      - build_image
+      - build
       - neuvector/scan-image:
           requires:
-            - build_image
+            - build
           context: exploit
           scan_local_image: true
           image_name: $IMAGE_NAME
