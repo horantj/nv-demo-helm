@@ -44,7 +44,7 @@ workflows:
   scan-local-image:
     jobs:
       - build
-      - neuvector/scan-image:
+      - neuvector-orb/scan-image:
           requires:
             - build
           context: exploit
