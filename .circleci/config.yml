@@ -35,12 +35,12 @@ jobs:
           name: Load archived Docker image
           command: docker load -i /tmp/workspace/image.tar
       - run:
-        name: Publish Docker Image to Docker Hub
-        command: |
-          echo "$HUB_API" | docker login -u "HUB_USER" --password-stdin
-          IMAGE_TAG=${CIRCLE_TAG/v/''}
-          docker tag $IMAGE_NAME:$CIRCLE_SHA1 $IMAGE_NAME:$IMAGE_TAG
-          docker push $IMAGE_NAME:$IMAGE_TAG
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$HUB_API" | docker login -u "HUB_USER" --password-stdin
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            docker tag $IMAGE_NAME:$CIRCLE_SHA1 $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:$IMAGE_TAG
 workflows:
   version: 2  
   scan-local-image:
