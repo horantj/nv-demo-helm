@@ -1,0 +1,81 @@
+version: 2.1
+orbs: 
+  neuvector-orb: neuvector/neuvector-orb@1.0.2
+executors:
+  docker-publisher:
+    docker:
+      - image: cimg/base:2021.04
+jobs:
+  build:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $IMAGE_NAME:$CIRCLE_SHA1 exploit-pod/
+      - run:
+          name: Save Docker image
+          command: |
+            rm -rf /tmp/neuvector/
+            mkdir /tmp/neuvector/ -p
+            docker save -o /tmp/neuvector/image.tar $IMAGE_NAME:$CIRCLE_SHA1
+      - persist_to_workspace:
+          root: /tmp/neuvector/
+          paths:
+            - ./
+  publish-tag:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$HUB_API" | docker login -u "HUB_USER" --password-stdin
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            docker tag $IMAGE_NAME:$CIRCLE_SHA1 $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:$IMAGE_TAG
+workflows:
+  version: 2  
+  scan-local-image:
+    jobs:
+      - build
+      - neuvector-orb/scan-image:
+          requires:
+            - build
+          context: exploit
+          scan_local_image: true
+          image_name: $IMAGE_NAME
+          image_tag: $CIRCLE_SHA1
+          path: /tmp/neuvector/
+          image_tar_file: image.tar
+          scan_layers: false
+          high_vul_to_fail: 1
+          medium_vul_to_fail: 3
+          nv_registry_url: registry-1.docker.io
+          nv_registry_username: $HUB_USER
+          nv_registry_password: $HUB_API
+          nv_scanner_image: neuvector/scanner
+          nv_license: bogus
+  build-tags:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: main
+      - publish-tag:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: main
