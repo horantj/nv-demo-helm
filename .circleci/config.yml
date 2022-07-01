@@ -43,13 +43,13 @@ workflows:
       - build
       - neuvector/scan-image:
         requires:
-        - build
-          context: myContext
-          scan_local_image: true
-          image_name: $IMAGE_NAME
-          image_tag: $CIRCLE_SHA1
-          path: /tmp/workspace/
-          image_tar_file: /tmp/neuvector/image.tar
-          scan_layers: true
-          high_vul_to_fail: 1
-          medium_vul_to_fail: 3
+          - build
+        context: myContext
+        scan_local_image: true
+        image_name: $IMAGE_NAME
+        image_tag: $CIRCLE_SHA1
+        path: /tmp/workspace/
+        image_tar_file: /tmp/neuvector/image.tar
+        scan_layers: true
+        high_vul_to_fail: 1
+        medium_vul_to_fail: 3
