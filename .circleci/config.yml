@@ -65,6 +65,12 @@ workflows:
           nv_license: bogus
   build-tags:
     jobs:
+      - build:
+        filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: main
       - publish-tag:
           requires:
             - build
