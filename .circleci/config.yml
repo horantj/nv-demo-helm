@@ -4,7 +4,7 @@ orbs:
 executors:
   docker-publisher:
     docker:
-      - image: circleci/buildpack-deps:stretch
+      - image: cimg/base:2021.04
 jobs:
   build:
     executor: docker-publisher
@@ -16,12 +16,15 @@ jobs:
           command: |
             docker build -t $IMAGE_NAME:$CIRCLE_SHA1 exploit-pod/
       - run:
-          name: Archive Docker image
-          command: docker save -o image.tar $IMAGE_NAME
+          name: Save Docker image
+          command: |
+            rm -rf /tmp/neuvector/
+            mkdir /tmp/neuvector/ -p
+            docker save -o /tmp/neuvector/image.tar $IMAGE_NAME:$CIRCLE_SHA1
       - persist_to_workspace:
-          root: .
+          root: /tmp/neuvector/
           paths:
-            - ./image.tar
+            - ./
   publish-latest:
     executor: docker-publisher
     steps:
@@ -41,3 +44,18 @@ workflows:
   build:
     jobs:
       - build
+  scan-local-image:
+    jobs:
+      - build_image
+      - neuvector/scan-image:
+          requires:
+            - build_image
+          context: exploit
+          scan_local_image: true
+          image_name: $IMAGE_NAME
+          image_tag: $CIRCLE_SHA1
+          path: /tmp/neuvector/
+          image_tar_file: /tmp/neuvector/image.tar
+          scan_layers: false
+          high_vul_to_fail: 0
+          medium_vul_to_fail: 3
