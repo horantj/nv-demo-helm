@@ -54,7 +54,7 @@ workflows:
           path: /tmp/neuvector/
           image_tar_file: image.tar
           scan_layers: false
-          high_vul_to_fail: 0
+          high_vul_to_fail: 1
           medium_vul_to_fail: 3
           nv_registry_url: registry-1.docker.io
           nv_registry_username: $HUB_USER
