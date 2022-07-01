@@ -44,12 +44,15 @@ jobs:
 workflows:
   version: 2  
   build-and-scan:
-    filters:
-      branches:
-        ignore: main
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              ignore: main          
       - neuvector-orb/scan-image:
+          filters:
+            branches:
+              ignore: main    
           requires:
             - build
           context: exploit
@@ -67,9 +70,6 @@ workflows:
           nv_scanner_image: neuvector/scanner
           nv_license: bogus
   build-and-release:
-    filters:
-      branches:
-        only: main
     jobs:
       - build:
           filters:
