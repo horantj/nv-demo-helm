@@ -4,8 +4,10 @@ struts:
     port: 80
   ingress:
     enabled: true
-    host: "struts.34.206.72.88.sslip.io"
+    host: "struts.host"
     ingressClassName: ""
     path: "/"
     annotations: {}
     tls: true
+exploit:
+  image_tag: "0.3"
