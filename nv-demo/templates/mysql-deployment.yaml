@@ -21,6 +21,10 @@ spec:
       - env:
         - name: MYSQL_ROOT_PASSWORD
           value: password
+        - name: MYSQL_ROOT_HOST
+          value: '%'
+        - name: MYSQL_LOG_CONSOLE
+          value: "TRUE"
         image: mysql:5.7
         imagePullPolicy: IfNotPresent
         name: mysql1
