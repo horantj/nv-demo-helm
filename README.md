@@ -12,7 +12,8 @@ struts.ingress.host: Use a host or IP for ingress to struts. i.e. "struts.3.227.
 git clone https://github.com/horantj/nv-demo-helm.git
 helm install -n demo --create-namespace \
 --set exploit.image_tag=0.4 --set struts.ingress.enabled=true \
---set struts.ingress.host=struts.3.227.235.243.sslip.io
+--set struts.ingress.host=struts.3.227.235.243.sslip.io \
+demo-release nv-demo-helm/nv-demo
 ```
 
 ## Using exploit tool:
