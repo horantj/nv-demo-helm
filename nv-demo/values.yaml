@@ -10,4 +10,4 @@ struts:
     annotations: {}
     tls: true
 exploit:
-  image_tag: "0.3"
+  image_tag: "0.4"
